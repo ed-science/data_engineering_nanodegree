@@ -18,7 +18,7 @@ def subtraction():
 
 
 def division():
-    logging.info(f"10 / 2 = {int(10/2)}")
+    logging.info(f"10 / 2 = {10 // 2}")
 
 
 dag = DAG(

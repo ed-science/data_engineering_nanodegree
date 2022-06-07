@@ -24,7 +24,7 @@ class DataQualityOperator(BaseOperator):
         aws_hook = AwsHook(self.aws_credentials_id)
         credentials = aws_hook.get_credentials()
         redshift = PostgresHook(self.redshift_conn_id)
-        
+
         error_count = 0
         failed_cases = []
         for dq_stmt, expect_result in self.dq_checks.items():
@@ -32,12 +32,12 @@ class DataQualityOperator(BaseOperator):
             if result != expect_result:
                 error_count += 1
                 failed_cases.append(dq_stmt)
-        
+
         if error_count:
             self.log.warning(f"number of failed test case : {error_count}")
             self.log.warning(failed_cases)
             raise ValueError("Data quality check failed")
-            
+
         self.log.warning("Data quality check passed")
                 
         

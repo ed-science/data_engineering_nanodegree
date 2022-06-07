@@ -24,10 +24,10 @@ def main():
 
     cfg = configparser.ConfigParser()
     cfg.read('/Users/pathairs/Documents/projects/data_engineering/06_capstone_project/etl/config.cfg')
-    
+
     files = [cfg['OUTPUT_FILE']['FACT_TABLE'], cfg['OUTPUT_FILE']['DIM_USER'], cfg['OUTPUT_FILE']['DIM_DATE'], cfg['OUTPUT_FILE']['DIM_STATE'], cfg['OUTPUT_FILE']['DIM_COUNTRY']]
     primary_keys = ['id', 'cicid', 'date', 'state_code', 'country']
-    map_primary_key = {file:pk for file, pk in zip(files, primary_keys)}
+    map_primary_key = dict(zip(files, primary_keys))
 
     spark = SparkSession.builder\
             .config("spark.jars.packages", cfg['SPARK_CONFIG']['JAR_PACKAGE'])\

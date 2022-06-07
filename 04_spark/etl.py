@@ -18,11 +18,9 @@ def create_spark_session():
     """
     Create spark session with hadoop-aws jar
     """
-    spark = SparkSession \
-        .builder \
-        .config("spark.jars.packages", "org.apache.hadoop:hadoop-aws:2.7.0") \
-        .getOrCreate()
-    return spark
+    return SparkSession.builder.config(
+        "spark.jars.packages", "org.apache.hadoop:hadoop-aws:2.7.0"
+    ).getOrCreate()
 
 def process_song_data(spark, input_data, output_data):
     """
@@ -192,10 +190,10 @@ def main():
     spark = create_spark_session()
     input_data = "s3a://udacity-dend/"
     output_data = "s3a://psbucket-190238091238901/"
-    
+
     process_song_data(spark, input_data, output_data)    
     process_log_data(spark, input_data, output_data)
-    
+
     spark.stop();
 
 if __name__ == "__main__":

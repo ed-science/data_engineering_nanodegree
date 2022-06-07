@@ -26,7 +26,7 @@ def convert_mapping_to_pdf(mapping, join_column_name, target_column_name):
     return pd.DataFrame.from_dict(mapping, orient='index').reset_index().rename({'index' :  join_column_name, 0 : target_column_name},axis=1)
 
 def main():
-    
+
     cfg = configparser.ConfigParser()
     cfg.read('/Users/pathairs/Documents/projects/data_engineering/06_capstone_project/etl/config.cfg')
 
@@ -37,7 +37,7 @@ def main():
         os.mkdir(mapping_path)
 
     with open(label_description_file) as f:
-        
+
         logging.info('open sas file and extract key-value pair from mapping')
         f_content = f.read()
         f_content = f_content.replace('\t', '')
@@ -46,7 +46,7 @@ def main():
         i94mode = code_mapper(f_content, "i94model")
         i94addr = code_mapper(f_content, "i94addrl")
         i94visa = {'1':'Business', '2': 'Pleasure', '3' : 'Student'}
-        
+
         logging.info('convert to pandas dataframe')
         city_code = convert_mapping_to_pdf(i94cit_res, join_column_name = 'i94cit', target_column_name = 'born_country')
         residence_code = convert_mapping_to_pdf(i94cit_res, join_column_name = 'i94res', target_column_name = 'residence_country')
@@ -54,7 +54,7 @@ def main():
         mode_code = convert_mapping_to_pdf(i94mode, join_column_name = 'i94mode', target_column_name = 'transportation')
         addr_code = convert_mapping_to_pdf(i94addr, join_column_name = 'i94addr', target_column_name = 'state')
         visa_code = convert_mapping_to_pdf(i94visa, join_column_name = 'i94visa', target_column_name = 'visa_code')
-        
+
         logging.info('saving mapping files in csv format')
         city_code.to_csv(os.path.join(cfg['PATH']['DEV'], 'output/mapping_data/city_code.csv'), index=False, header=True)
         residence_code.to_csv(os.path.join(cfg['PATH']['DEV'], 'output/mapping_data/residence_code.csv'), index=False, header=True)

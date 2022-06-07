@@ -30,21 +30,18 @@ class LoadDimensionOperator(BaseOperator):
         aws_hook = AwsHook(self.aws_credentials_id)
         credentials = aws_hook.get_credentials()
         redshift = PostgresHook(self.redshift_conn_id)
-                
+
         if self.is_delete_load:
             
-            self.log.info(f'Trigger delete-load')
+            self.log.info('Trigger delete-load')
             self.log.info('Drop dimension table if exists')
             redshift.run(f"DROP TABLE IF EXISTS public.{self.table}")
-        
+
             self.log.info('Crate dimension table')
             redshift.run(self.create_stmt)
 
-            self.log.info('Insert data to dimension table')
-            redshift.run(self.insert_stmt)
-            
         else:
             
-            self.log.info(f'Trigger append-only')
-            self.log.info('Insert data to dimension table')
-            redshift.run(self.insert_stmt)
+            self.log.info('Trigger append-only')
+        self.log.info('Insert data to dimension table')
+        redshift.run(self.insert_stmt)

@@ -7,7 +7,7 @@ def clean_column_name(sdf):
     return sdf.toDF(*[c.lower().replace(' ', '_').replace('-','_') for c in sdf.columns])
 
 def upsert_table(spark, updatesDF, condition, output_file, partition_columns=None):
-    
+
     '''
     update/insert transformed immigration data to fact_table
     incase of duplicate id, overwrite the old value with new value, otherwise append it to dataframe
@@ -15,15 +15,8 @@ def upsert_table(spark, updatesDF, condition, output_file, partition_columns=Non
     
     from delta.tables import DeltaTable
 
-    if not os.path.exists(output_file):
-        
-        if partition_columns is None:
-            updatesDF.write.format('delta').save(output_file)
-        else:
-            updatesDF.write.format('delta').partitionBy(*partition_columns).save(output_file)
-            
-    else:
-        
+    if os.path.exists(output_file):
+
         deltaTable = DeltaTable.forPath(spark, output_file)
 
         deltaTable.alias("source").merge(
@@ -32,3 +25,7 @@ def upsert_table(spark, updatesDF, condition, output_file, partition_columns=Non
           .whenMatchedUpdateAll() \
           .whenNotMatchedInsertAll() \
           .execute()
+    elif partition_columns is None:
+        updatesDF.write.format('delta').save(output_file)
+    else:
+        updatesDF.write.format('delta').partitionBy(*partition_columns).save(output_file)
